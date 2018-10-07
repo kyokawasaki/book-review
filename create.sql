@@ -17,3 +17,13 @@ CREATE TABLE users(
     username VARCHAR NOT NULL UNIQUE,
     password VARCHAR NOT NULL
 );
+
+CREATE TABLE reviews(
+    id SERIAL PRIMARY KEY,
+    score FLOAT NOT NULL,
+    comment VARCHAR,
+    user_id SERIAL NOT NULL REFERENCES authors(id),
+    book_id SERIAL NOT NULL REFERENCES books(id),
+    UNIQUE (user_id, book_id),
+    CHECK (score>=1 and score<=5)
+);
