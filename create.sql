@@ -10,3 +10,10 @@ CREATE TABLE books (
     year INTEGER NOT NULL,
     author_id SERIAL NOT NULL REFERENCES authors(id)
 );
+
+CREATE TABLE users(
+    id SERIAL PRIMARY KEY,
+    email VARCHAR NOT NULL UNIQUE,
+    username VARCHAR NOT NULL UNIQUE,
+    password VARCHAR NOT NULL
+);
