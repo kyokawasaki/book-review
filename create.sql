@@ -1,0 +1,12 @@
+CREATE TABLE authors (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR UNIQUE NOT NULL
+);
+
+CREATE TABLE books (
+    id SERIAL PRIMARY KEY,
+    isbn VARCHAR NOT NULL,
+    title VARCHAR NOT NULL,
+    year INTEGER NOT NULL,
+    author_id SERIAL NOT NULL REFERENCES authors(id)
+);
