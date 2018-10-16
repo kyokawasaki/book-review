@@ -1,9 +1,10 @@
 import os
 
-from flask import Flask, session, render_template
+from flask import Flask, session, render_template, request
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
+from werkzeug.security import generate_password_hash
 
 app = Flask(__name__)
 
@@ -25,6 +26,22 @@ db = scoped_session(sessionmaker(bind=engine))
 def index():
     return render_template("index.html")
 
-@app.route("/user")
+@app.route("/user", methods=['GET', 'POST'])
 def register():
+    if request.method == 'POST':
+        email = request.form.get("email")
+        username = request.form.get("username")
+        password = generate_password_hash(request.form.get("password"))
+
+        username_available = db.execute("SELECT * FROM users WHERE username = :username",
+            {"username": username}).rowcount == 0
+        
+        if (username_available):
+            db.execute("INSERT INTO users (email, username, password) VALUES (:email, :username, :password)",
+                {"email": email, "username": username, "password": password})
+            db.commit()
+            return render_template("success.html", message="User registered with success!")
+        
+        return render_template("error.html", message="User already exists.")
+
     return render_template("register.html")
