@@ -45,3 +45,7 @@ def register():
         return render_template("error.html", message="User already exists.")
 
     return render_template("register.html")
+
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    return render_template("login.html")
