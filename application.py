@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, session, render_template, request
+from flask import Flask, session, render_template, request, redirect
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -49,7 +49,7 @@ def register():
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if session.get("user") is None:
-        session["user"] = ""
+        session["user"] = None
 
     if request.method == 'POST':
         username = request.form.get("username")
@@ -67,3 +67,11 @@ def login():
         return render_template("error.html", message="Username and/or password are incorrect. Please try again.")
 
     return render_template("login.html", user=session["user"])
+
+@app.route("/logout")
+def logout():
+    if session.get("user") is None:
+        return redirect("/login")
+    
+    session["user"] = None
+    return render_template("success.html", message="Logout realized with success.")

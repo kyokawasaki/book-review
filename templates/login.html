@@ -7,7 +7,7 @@
     	Login
     </h2>
 
-    {% if user == "" %}
+    {% if user is none %}
         <form method="POST" class="mt-4">
             <div class="form-group">
                 <label for="register-username">Username</label>
