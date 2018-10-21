@@ -26,6 +26,12 @@ db = scoped_session(sessionmaker(bind=engine))
 def index():
     return render_template("index.html")
 
+@app.route("/books")
+def books():
+    books = db.execute("""SELECT books.id, books.isbn, books.title, authors.name FROM books JOIN authors
+        ON (books.author_id = authors.id)""").fetchall() 
+    return render_template("books.html", books=books)
+
 @app.route("/search")
 def search():
     query = request.args.get("search")
