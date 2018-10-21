@@ -15,4 +15,10 @@
         </div>
         <button type="submit" class="btn btn-primary">Search</button>
     </form>
+
+    <ul class="my-3">
+        {% for book in books %}
+            <li><a href="#">{{ book["title"] }} - {{ book["name"]}}</a></li>
+        {% endfor %}
+    </ul>
 {% endblock %}
