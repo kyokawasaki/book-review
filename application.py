@@ -48,6 +48,9 @@ def register():
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
+    if session.get("user") is None:
+        session["user"] = ""
+
     if request.method == 'POST':
         username = request.form.get("username")
         password = request.form.get("password")
@@ -58,7 +61,9 @@ def login():
         if (db_password != None):
             check = check_password_hash(db_password[0], password)
             if (check):
+                session["user"] = username
                 return render_template("success.html", message="Login realized with success")
         
         return render_template("error.html", message="Username and/or password are incorrect. Please try again.")
-    return render_template("login.html")
+
+    return render_template("login.html", user=session["user"])
