@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+    <h2>
+    	Login
+    </h2>
+
+    {% if user is none %}
+        <form method="POST" class="mt-4">
+            <div class="form-group">
+                <label for="register-username">Username</label>
+                <input type="text" class="form-control" id="register-username" placeholder="Enter Username" name="username">
+            </div>
+            <div class="form-group">
+                <label for="register-password">Password</label>
+                <input type="password" class="form-control" id="register-password" placeholder="Enter Password" name="password">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    {% else %}
+        <p>You're already logged in as {{ user }}.</p>
+    {% endif %}
+        
+{% endblock %}
