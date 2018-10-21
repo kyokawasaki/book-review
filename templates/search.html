@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+{% block title %}Search{% endblock %}
+
+{% block content %}
+    <h2>
+        Search
+    </h2>
+
+    <form class="mt-4">
+        <div class="form-group">
+            <label for="book-search">Search for a book:</label>
+            <input type="text" class="form-control" id="book-search" placeholder="Enter your query" name="search">
+            <small>Try to type a ISBN number, a title or an author.</small>
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+    <ul class="my-3">
+        {% for book in books %}
+            <li><a href="/books/{{ book['id'] }}">{{ book["title"] }} - {{ book["name"]}}</a></li>
+            <!-- {% for key, value in book.items() %}
+                <li>{{ key }}: {{ value }}</li>
+            {% endfor %} -->
+        {% endfor %}
+    </ul>
+{% endblock %}

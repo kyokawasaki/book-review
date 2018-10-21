@@ -26,6 +26,20 @@ db = scoped_session(sessionmaker(bind=engine))
 def index():
     return render_template("index.html")
 
+@app.route("/search")
+def search():
+    query = request.args.get("search")
+    books = []
+
+    if query is not None and query != "":
+        books = db.execute("""SELECT books.id, books.isbn, books.title, authors.name 
+            FROM books JOIN authors ON (books.author_id = authors.id) WHERE
+            LOWER(isbn) LIKE LOWER(:query) OR LOWER(title) LIKE LOWER(:query)
+            OR LOWER(authors.name) LIKE LOWER(:query)""",
+            {"query": '%' + query + '%'}).fetchall() 
+
+    return render_template("search.html", books=books)
+
 @app.route("/user", methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
