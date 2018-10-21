@@ -18,7 +18,10 @@
 
     <ul class="my-3">
         {% for book in books %}
-            <li><a href="#">{{ book["title"] }} - {{ book["name"]}}</a></li>
+            <li><a href="/books/{{ book['id'] }}">{{ book["title"] }} - {{ book["name"]}}</a></li>
+            <!-- {% for key, value in book.items() %}
+                <li>{{ key }}: {{ value }}</li>
+            {% endfor %} -->
         {% endfor %}
     </ul>
 {% endblock %}
