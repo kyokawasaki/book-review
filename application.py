@@ -4,7 +4,7 @@ from flask import Flask, session, render_template, request
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 
@@ -48,4 +48,17 @@ def register():
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
+    if request.method == 'POST':
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        db_password = db.execute("SELECT password FROM users WHERE username = :username",
+            {"username": username}).fetchone()
+        
+        if (db_password != None):
+            check = check_password_hash(db_password[0], password)
+            if (check):
+                return render_template("success.html", message="Login realized with success")
+        
+        return render_template("error.html", message="Username and/or password are incorrect. Please try again.")
     return render_template("login.html")
