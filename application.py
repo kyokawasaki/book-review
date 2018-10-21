@@ -28,7 +28,16 @@ def index():
 
 @app.route("/search")
 def search():
-    return render_template("search.html")
+    query = request.args.get("search")
+    books = []
+
+    if query is not None and query != "":
+        books = db.execute("""SELECT * FROM books JOIN authors ON (author_id = authors.id) WHERE
+            LOWER(isbn) LIKE LOWER(:query) OR LOWER(title) LIKE LOWER(:query)
+            OR LOWER(authors.name) LIKE LOWER(:query)""",
+            {"query": '%' + query + '%'}).fetchall() 
+
+    return render_template("search.html", books=books)
 
 @app.route("/user", methods=['GET', 'POST'])
 def register():
