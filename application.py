@@ -26,6 +26,10 @@ db = scoped_session(sessionmaker(bind=engine))
 def index():
     return render_template("index.html")
 
+@app.route("/search")
+def search():
+    return render_template("search.html")
+
 @app.route("/user", methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
