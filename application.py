@@ -32,12 +32,30 @@ def books():
         ON (books.author_id = authors.id)""").fetchall()
     return render_template("books.html", books=books)
 
-@app.route("/books/<int:book_id>")
+@app.route("/books/<int:book_id>", methods=['GET', 'POST'])
 def book(book_id):
     book = db.execute("""SELECT * FROM books JOIN authors ON (books.author_id = authors.id) WHERE
         books.id = :book_id""", {"book_id": book_id}).fetchone()
     if book is None:
         return render_template("error.html", message="Invalid book id.")
+
+    if request.method == "POST":
+        score = request.form.get("score")
+        comment = request.form.get("comment")
+        user = session.get("user")
+
+        if user is None:
+            return render_template("error.html", message="Please login before submitting a review")
+
+        user_id = db.execute("SELECT id FROM users WHERE username = :username", {"username": user}).fetchone()
+
+        try:
+            db.execute("""INSERT INTO reviews (score, comment, user_id, book_id)
+                VALUES (:score, :comment, :user_id, :book_id)""",
+                {"score": score, "comment": comment, "user_id": user_id[0], "book_id": book_id})
+            db.commit()
+        except ValueError:
+            return render_template("error.html", message="Something went wrong!")
         
     return render_template("book.html", book=book)
 
