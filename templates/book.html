@@ -27,8 +27,20 @@
     </table>
     
     <hr class="my-3">
+    <h3>Reviews</h3>
+    <div class="d-flex justify-content-between flex-wrap">
+        {% for review in reviews %}
+            <div class="list-group mb-3 col-lg-6">
+                <p class="list-group-item"><strong>Score:</strong> {{ review.score }}</p>
+                <p class="list-group-item"><strong>Comment:</strong> {{ review.comment }}</p>
+                <p class="list-group-item">Made by {{ review.username }}</p>
+            </div>
+        {% endfor %}
+    </div>
+    
+    <hr class="my-3">
 
-    <h3>Review</h3>
+    <h3>Submit a review</h3>
     <form method="post">
         <legend class="col-form-label py-0">Score:</legend>
         <div class="form-check form-check-inline">

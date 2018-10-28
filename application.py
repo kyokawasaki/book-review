@@ -39,6 +39,9 @@ def book(book_id):
     if book is None:
         return render_template("error.html", message="Invalid book id.")
 
+    reviews = db.execute("""SELECT reviews.score, reviews.comment, users.username FROM reviews JOIN users ON (user_id = users.id)
+        WHERE book_id = :book_id""", {"book_id": book_id})
+
     if request.method == "POST":
         score = request.form.get("score")
         comment = request.form.get("comment")
@@ -57,7 +60,7 @@ def book(book_id):
         except ValueError:
             return render_template("error.html", message="Something went wrong!")
         
-    return render_template("book.html", book=book)
+    return render_template("book.html", book=book, reviews=reviews)
 
 @app.route("/search")
 def search():
