@@ -35,16 +35,20 @@ def books():
 
 @app.route("/books/<int:book_id>", methods=['GET', 'POST'])
 def book(book_id):
+    if session.get("user") is None:
+        return render_template("error.html", message="Please login to access the books section")
+
     book = db.execute("""SELECT books.id, books.isbn, books.title, books.year, authors.name FROM books
         JOIN authors ON (books.author_id = authors.id) WHERE books.id = :book_id""",
         {"book_id": book_id}).fetchone()
     if book is None:
         return render_template("error.html", message="Invalid book id.")
 
-    api = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "QsukmixisgSsVGiBVGJH3Q", "isbns": book[1]})
+    api = requests.get("https://www.goodreads.com/book/review_counts.json",params={"key": "QsukmixisgSsVGiBVGJH3Q",
+        "isbns": book[1]})
 
-    reviews = db.execute("""SELECT reviews.score, reviews.comment, users.username FROM reviews JOIN users ON (user_id = users.id)
-        WHERE book_id = :book_id""", {"book_id": book_id})
+    reviews = db.execute("""SELECT reviews.score, reviews.comment, users.username FROM reviews JOIN users ON
+        (user_id = users.id) WHERE book_id = :book_id""", {"book_id": book_id})
         
     return render_template("book.html", book=book, reviews=reviews, api=api.json())
 
@@ -93,6 +97,9 @@ def review():
 
 @app.route("/search")
 def search():
+    if session.get("user") is None:
+        return render_template("error.html", message="Please login to be able to search for books")
+
     query = request.args.get("search")
     books = []
 
