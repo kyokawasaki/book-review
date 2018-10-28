@@ -22,7 +22,7 @@ CREATE TABLE reviews(
     id SERIAL PRIMARY KEY,
     score FLOAT NOT NULL,
     comment VARCHAR,
-    user_id SERIAL NOT NULL REFERENCES authors(id),
+    user_id SERIAL NOT NULL REFERENCES users(id),
     book_id SERIAL NOT NULL REFERENCES books(id),
     UNIQUE (user_id, book_id),
     CHECK (score>=1 and score<=5)
