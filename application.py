@@ -1,4 +1,5 @@
 import os
+import requests
 
 from flask import Flask, session, render_template, request, redirect
 from flask_session import Session
@@ -40,10 +41,12 @@ def book(book_id):
     if book is None:
         return render_template("error.html", message="Invalid book id.")
 
+    api = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "QsukmixisgSsVGiBVGJH3Q", "isbns": book[1]})
+
     reviews = db.execute("""SELECT reviews.score, reviews.comment, users.username FROM reviews JOIN users ON (user_id = users.id)
         WHERE book_id = :book_id""", {"book_id": book_id})
         
-    return render_template("book.html", book=book, reviews=reviews)
+    return render_template("book.html", book=book, reviews=reviews, api=api.json())
 
 @app.route("/review", methods=['POST'])
 def review():

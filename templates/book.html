@@ -24,6 +24,14 @@
             <th>Publish Year</th>
             <td>{{ book.year }}</td>
         </tr>
+        <tr>
+            <th>GoodReads Rating Count</th>
+            <td>{{ api.books.0.ratings_count }}</td>
+        </tr>
+        <tr>
+            <th>GoodReads Average Rating</th>
+            <td>{{ api.books.0.average_rating }}</td>
+        </tr>
     </table>
     
     <hr class="my-3">
