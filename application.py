@@ -1,6 +1,7 @@
 import os
+import requests
 
-from flask import Flask, session, render_template, request, redirect
+from flask import Flask, session, render_template, request, redirect, jsonify
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -40,10 +41,30 @@ def book(book_id):
     if book is None:
         return render_template("error.html", message="Invalid book id.")
 
+    api = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "QsukmixisgSsVGiBVGJH3Q", "isbns": book[1]})
+
     reviews = db.execute("""SELECT reviews.score, reviews.comment, users.username FROM reviews JOIN users ON (user_id = users.id)
         WHERE book_id = :book_id""", {"book_id": book_id})
         
-    return render_template("book.html", book=book, reviews=reviews)
+    return render_template("book.html", book=book, reviews=reviews, api=api.json())
+
+@app.route("/api/<string:book_isbn>")
+def api(book_isbn):
+    book = db.execute("""SELECT books.title, books.isbn, books.year, authors.name FROM books
+        JOIN authors ON (books.author_id = authors.id) WHERE books.isbn = :book_isbn""",
+        {"book_isbn": book_isbn}).fetchone()
+    request = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "QsukmixisgSsVGiBVGJH3Q", "isbns": book_isbn})
+
+    api = {
+        "title": book[0],
+        "isbn": book[1],
+        "year": book[2],
+        "author": book[3],
+        "review_count": request.json()["books"][0]["ratings_count"],
+        "average_score": request.json()["books"][0]["average_rating"]
+    }
+
+    return jsonify(api)
 
 @app.route("/review", methods=['POST'])
 def review():
