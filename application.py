@@ -26,6 +26,21 @@ db = scoped_session(sessionmaker(bind=engine))
 def index():
     return render_template("index.html")
 
+@app.route("/books")
+def books():
+    books = db.execute("""SELECT books.id, books.isbn, books.title, authors.name FROM books JOIN authors
+        ON (books.author_id = authors.id)""").fetchall()
+    return render_template("books.html", books=books)
+
+@app.route("/books/<int:book_id>")
+def book(book_id):
+    book = db.execute("""SELECT * FROM books JOIN authors ON (books.author_id = authors.id) WHERE
+        books.id = :book_id""", {"book_id": book_id}).fetchone()
+    if book is None:
+        return render_template("error.html", message="Invalid book id.")
+        
+    return render_template("book.html", book=book)
+
 @app.route("/search")
 def search():
     query = request.args.get("search")

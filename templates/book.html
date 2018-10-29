@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ book.title }}{% endblock %}
+
+{% block content %}
+    <h2>
+        {{ book.title }}
+    </h2>
+
+    <table class="table table-striped mt-4">
+        <tr>
+            <th>ISBN</th>
+            <td>{{ book.isbn }}</td>
+        </tr>
+        <tr>
+            <th>Title</th>
+            <td>{{ book.title }}</td>
+        </tr>
+        <tr>
+            <th>Author</th>
+            <td>{{ book.name }}</td>
+        </tr>
+        <tr>
+            <th>Publish Year</th>
+            <td>{{ book.year }}</td>
+        </tr>
+    </table>
+{% endblock %}
