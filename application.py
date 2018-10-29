@@ -32,14 +32,43 @@ def books():
         ON (books.author_id = authors.id)""").fetchall()
     return render_template("books.html", books=books)
 
-@app.route("/books/<int:book_id>")
+@app.route("/books/<int:book_id>", methods=['GET', 'POST'])
 def book(book_id):
-    book = db.execute("""SELECT * FROM books JOIN authors ON (books.author_id = authors.id) WHERE
-        books.id = :book_id""", {"book_id": book_id}).fetchone()
+    book = db.execute("""SELECT books.id, books.isbn, books.title, books.year, authors.name FROM books
+        JOIN authors ON (books.author_id = authors.id) WHERE books.id = :book_id""",
+        {"book_id": book_id}).fetchone()
     if book is None:
         return render_template("error.html", message="Invalid book id.")
+
+    reviews = db.execute("""SELECT reviews.score, reviews.comment, users.username FROM reviews JOIN users ON (user_id = users.id)
+        WHERE book_id = :book_id""", {"book_id": book_id})
         
-    return render_template("book.html", book=book)
+    return render_template("book.html", book=book, reviews=reviews)
+
+@app.route("/review", methods=['POST'])
+def review():
+    score = request.form.get("score")
+    comment = request.form.get("comment")
+    book_id = request.form.get("book")
+    user = session.get("user")
+
+    if user is None:
+        return render_template("error.html", message="Please login before submitting a review")
+
+    user_id = db.execute("SELECT id FROM users WHERE username = :username", {"username": user}).fetchone()
+
+    if score is None or comment == "":
+        return render_template("error.html", message="Please fill out all the fields before submitting")
+    
+    try:
+        db.execute("""INSERT INTO reviews (score, comment, user_id, book_id)
+            VALUES (:score, :comment, :user_id, :book_id)""",
+            {"score": score, "comment": comment, "user_id": user_id[0], "book_id": book_id})
+        db.commit()
+    except:
+        return render_template("error.html", message="Something went wrong!")
+    
+    return redirect("/books/" + book_id)
 
 @app.route("/search")
 def search():
