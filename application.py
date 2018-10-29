@@ -57,12 +57,15 @@ def review():
 
     user_id = db.execute("SELECT id FROM users WHERE username = :username", {"username": user}).fetchone()
 
+    if score is None or comment == "":
+        return render_template("error.html", message="Please fill out all the fields before submitting")
+    
     try:
         db.execute("""INSERT INTO reviews (score, comment, user_id, book_id)
             VALUES (:score, :comment, :user_id, :book_id)""",
             {"score": score, "comment": comment, "user_id": user_id[0], "book_id": book_id})
         db.commit()
-    except ValueError:
+    except:
         return render_template("error.html", message="Something went wrong!")
     
     return redirect("/books/" + book_id)
