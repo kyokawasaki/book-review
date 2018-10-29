@@ -3,7 +3,14 @@
 {% block title %}Index{% endblock %}
 
 {% block content %}
-    <h2 class="text-center">
-    	Hello World
-    </h2>
+    <h2>Welcome to Book Review</h2>
+    <p class="mt-5">
+        This website is a place to review your favorite books. Also to see other peoples review and with that
+        share your experiences.
+    </p>
+    <p>
+        To be able to fully appreciate all the features available in here, we ask you to register as a user.
+        You can sign up in here:
+    </p>
+    <a class="btn btn-success btn-block rounded py-2 mt-4" href="{{ url_for('register') }}">Sign up</a>
 {% endblock %}
